@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PAULISTÃO A4 RIVALO 2026</title>
+    <style>
+        :root {
+            --ge-green: #06aa48;
+            --ge-dark: #333;
+            --ge-gray: #f1f1f1;
+            --white: #ffffff;
+            --border: #e2e2e2;
+        }
+
+        body {
+            font-family: "Open Sans", Arial, sans-serif;
+            background-color: var(--ge-gray);
+            margin: 0;
+            color: var(--ge-dark);
+        }
+
+        header {
+            background-color: var(--white);
+            padding: 20px;
+            border-bottom: 5px solid var(--ge-green);
+            text-align: center;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 20px;
+            max-width: 1300px;
+            margin: 20px auto;
+            padding: 0 10px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout { grid-template-columns: 1fr; }
+        }
+
+        h2 {
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            border-left: 4px solid var(--ge-green);
+            padding-left: 10px;
+            margin: 20px 0 15px 0;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-bottom: 20px;
+            min-height: 50px;
+        }
+
+        .match-group {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .match-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+        .match-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 0;
+            gap: 5px;
+        }
+
+        .label-game {
+            font-size: 0.65rem;
+            color: #888;
+            font-weight: bold;
+            width: 35px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .team {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            min-width: 0; 
+        }
+
+        .team.home { justify-content: flex-end; }
+        .team.away { justify-content: flex-start; }
+
+        .team span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .team img {
+            width: 28px;
+            height: 28px;
+            margin: 0 8px;
+            flex-shrink: 0;
+            object-fit: contain;
+        }
+
+        .scores {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-shrink: 0;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .score-input {
+            width: 35px;
+            height: 30px;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: bold;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 0;
+            background: #fdfdfd;
+        }
+
+        @media (max-width: 480px) {
+            .team span { font-size: 0.75rem; }
+            .team img { width: 22px; height: 22px; margin: 0 4px; }
+            .score-input { width: 30px; height: 28px; font-size: 0.95rem; }
+            .label-game { width: 30px; font-size: 0.55rem; }
+            .scores { gap: 3px; }
+            .card { padding: 10px; }
+        }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+        th { background: #f8f8f8; padding: 10px 3px; text-align: center; border-bottom: 2px solid var(--border); }
+        td { padding: 8px 3px; text-align: center; border-bottom: 1px solid var(--border); }
+        .td-team { text-align: left; font-weight: bold; display: flex; align-items: center; }
+        .td-team img { width: 16px; height: 16px; margin-right: 6px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1 style="margin:0; letter-spacing: 1px; font-size: 1.4rem;">PAULISTÃO A4 RIVALO 2026</h1>
+</header>
+
+<div class="main-layout">
+    <div class="simulation-area">
+        
+        <h2>Quartas de Final</h2>
+        <div class="card" id="qf-container">
+            </div>
+
+        <div id="sf-section">
+            <h2>Semifinais</h2>
+            <div class="card">
+                <div class="match-group" id="sf1_container">
+                    <div class="match-row">
+                        <div class="label-game">IDA</div>
+                        <div class="team home"><span id="sf1_ih_name">4º Colocado</span><img id="sf1_ih_logo" style="display:none;"></div>
+                        <div class="scores"><input type="number" id="sf1_ih" class="score-input" value=""><span>X</span><input type="number" id="sf1_ia" class="score-input" value=""></div>
+                        <div class="team away"><img id="sf1_ia_logo" style="display:none;"><span id="sf1_ia_name">1º Colocado</span></div>
+                    </div>
+                    <div class="match-row">
+                        <div class="label-game">VOLTA</div>
+                        <div class="team home"><span id="sf1_vh_name">1º Colocado</span><img id="sf1_vh_logo" style="display:none;"></div>
+                        <div class="scores"><input type="number" id="sf1_vh" class="score-input" value=""><span>X</span><input type="number" id="sf1_va" class="score-input" value=""></div>
+                        <div class="team away"><img id="sf1_va_logo" style="display:none;"><span id="sf1_va_name">4º Colocado</span></div>
+                    </div>
+                </div>
+                <div class="match-group" id="sf2_container">
+                    <div class="match-row">
+                        <div class="label-game">IDA</div>
+                        <div class="team home"><span id="sf2_ih_name">3º Colocado</span><img id="sf2_ih_logo" style="display:none;"></div>
+                        <div class="scores"><input type="number" id="sf2_ih" class="score-input" value=""><span>X</span><input type="number" id="sf2_ia" class="score-input" value=""></div>
+                        <div class="team away"><img id="sf2_ia_logo" style="display:none;"><span id="sf2_ia_name">2º Colocado</span></div>
+                    </div>
+                    <div class="match-row">
+                        <div class="label-game">VOLTA</div>
+                        <div class="team home"><span id="sf2_vh_name">2º Colocado</span><img id="sf2_vh_logo" style="display:none;"></div>
+                        <div class="scores"><input type="number" id="sf2_vh" class="score-input" value=""><span>X</span><input type="number" id="sf2_va" class="score-input" value=""></div>
+                        <div class="team away"><img id="sf2_va_logo" style="display:none;"><span id="sf2_va_name">3º Colocado</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="f-section">
+            <h2>Grande Final</h2>
+            <div class="card">
+                <div class="match-group" id="f_container">
+                    <div class="match-row">
+                        <div class="label-game">IDA</div>
+                        <div class="team home"><span id="f_ih_name">Finalista 2</span><img id="f_ih_logo" style="display:none;"></div>
+                        <div class="scores"><input type="number" id="f_ih" class="score-input" value=""><span>X</span><input type="number" id="f_ia" class="score-input" value=""></div>
+                        <div class="team away"><img id="f_ia_logo" style="display:none;"><span id="f_ia_name">Finalista 1</span></div>
+                    </div>
+                    <div class="match-row">
+                        <div class="label-game">VOLTA</div>
+                        <div class="team home"><span id="f_vh_name">Finalista 1</span><img id="f_vh_logo" style="display:none;"></div>
+                        <div class="scores"><input type="number" id="f_vh" class="score-input" value=""><span>X</span><input type="number" id="f_va" class="score-input" value=""></div>
+                        <div class="team away"><img id="f_va_logo" style="display:none;"><span id="f_va_name">Finalista 2</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="table-area">
+        <h2>Classificação Geral</h2>
+        <div class="card" style="overflow-x: auto;">
+            <table id="leaderboard">
+                <thead>
+                    <tr>
+                        <th>Pos</th>
+                        <th>Time</th>
+                        <th>P</th>
+                        <th>V</th>
+                        <th>SG</th>
+                        <th>GP</th>
+                        <th>%</th>
+                    </tr>
+                </thead>
+                <tbody id="table-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const logos = {
+        "Inter de Bebedouro": "https://api.fpf.org.br/filiacao/v1/entidades/CLUBE/256/escudo?v=47a27f0d-6498-47f0-af1e-ac2c61b5f57c",
+        "São Caetano": "https://api.fpf.org.br/filiacao/v1/entidades/CLUBE/3389/escudo?v=3651cc3f-80a1-4301-9b78-da1c10dd523b",
+        "Penapolense": "https://api.fpf.org.br/filiacao/v1/entidades/CLUBE/3333/escudo?v=c25a8fd2-682c-499f-83fd-ae5b6a212129",
+        "São-Carlense": "https://api.fpf.org.br/filiacao/v1/entidades/CLUBE/13410/escudo?v=1640f948-dcae-4d46-a5b8-9bb0b48c5eed",
+        "Barretos": "https://api.fpf.org.br/filiacao/v1/entidades/CLUBE/37/escudo?v=226c9542-5754-415d-8875-5745b002b14d",
+        "Taquaritinga": "https://api.fpf.org.br/filiacao/v1/entidades/CLUBE/3414/escudo?v=b32746c1-16db-474a-8d66-6934680b868d",
+        "Jacareí FC": "https://api.fpf.org.br/filiacao/v1/entidades/CLUBE/281/escudo?v=aa19469b-2252-46d4-abe5-3c019ff24032",
+        "Lemense": "https://api.fpf.org.br/filiacao/v1/entidades/CLUBE/6263/escudo?v=f72f9b58-5fdd-41e0-920b-30c67c66f232"
+    };
+
+    const baseStats = {
+        "Inter de Bebedouro": { p: 33, j: 15, v: 10, e: 3, d: 2, gp: 21, gc: 6 },
+        "São Caetano": { p: 29, j: 15, v: 9, e: 2, d: 4, gp: 23, gc: 14 },
+        "Penapolense": { p: 29, j: 15, v: 8, e: 5, d: 2, gp: 22, gc: 10 },
+        "São-Carlense": { p: 26, j: 15, v: 7, e: 5, d: 3, gp: 20, gc: 13 },
+        "Barretos": { p: 26, j: 15, v: 7, e: 5, d: 3, gp: 12, gc: 10 },
+        "Taquaritinga": { p: 24, j: 15, v: 7, e: 3, d: 5, gp: 20, gc: 13 },
+        "Jacareí FC": { p: 23, j: 15, v: 6, e: 5, d: 4, gp: 11, gc: 9 },
+        "Lemense": { p: 22, j: 15, v: 6, e: 4, d: 5, gp: 14, gc: 12 }
+    };
+
+    const qfMatches = [
+        { id: 'qf1', mVolta: "Inter de Bebedouro", vVolta: "Lemense", resIdaM: 2, resIdaV: 0 },
+        { id: 'qf2', mVolta: "São Caetano", vVolta: "Jacareí FC", resIdaM: 0, resIdaV: 0 },
+        { id: 'qf3', mVolta: "Penapolense", vVolta: "Taquaritinga", resIdaM: 1, resIdaV: 1 },
+        { id: 'qf4', mVolta: "São-Carlense", vVolta: "Barretos", resIdaM: 1, resIdaV: 1 }
+    ];
+
+    function updateStats(s, home, away, gh, ga) {
+        if(!s[home] || !s[away]) return; 
+        s[home].j++; s[away].j++; 
+        s[home].gp += gh; s[home].gc += ga; 
+        s[away].gp += ga; s[away].gc += gh;
+        if(gh > ga) { s[home].p += 3; s[home].v++; }
+        else if(ga > gh) { s[away].p += 3; s[away].v++; }
+        else { s[home].p += 1; s[away].p += 1; }
+    }
+
+    function calculateWinner(mH, mV, gH_ida, gV_ida, gH_volta, gV_volta, statsObj) {
+        let aggH = gH_ida + gH_volta;
+        let aggV = gV_ida + gV_volta;
+        if (aggH > aggV) return mH;
+        if (aggV > aggH) return mV;
+        return statsObj[mH].p >= statsObj[mV].p ? mH : mV; 
+    }
+
+    function safeSetText(id, text) {
+        let el = document.getElementById(id);
+        if(el) el.innerText = text;
+    }
+
+    function safeSetImg(id, src) {
+        let el = document.getElementById(id);
+        if(el) {
+            if (src) {
+                el.src = src;
+                el.style.display = 'block';
+            } else {
+                el.src = '';
+                el.style.display = 'none';
+            }
+        }
+    }
+
+    function runSimulation() {
+        let stats = JSON.parse(JSON.stringify(baseStats));
+        let qfWinners = [];
+
+        // 1. Processar Quartas
+        qfMatches.forEach(m => {
+            updateStats(stats, m.vVolta, m.mVolta, m.resIdaV, m.resIdaM);
+
+            let elH = document.getElementById(m.id+'h');
+            let elA = document.getElementById(m.id+'a');
+            
+            // Só conta como vencedor se o jogo tiver os dois placares digitados
+            if (elH && elA && elH.value !== "" && elA.value !== "") {
+                let vM = parseInt(elH.value);
+                let vV = parseInt(elA.value);
+                updateStats(stats, m.mVolta, m.vVolta, vM, vV);
+                qfWinners.push(calculateWinner(m.mVolta, m.vVolta, m.resIdaM, m.resIdaV, vM, vV, stats));
+            }
+        });
+
+        // 2. Rankear os classificados até o momento
+        let sfTeams = qfWinners.map(n => ({name: n, ...stats[n]}))
+                 .sort((a,b) => b.p - a.p || b.v - a.v || (b.gp-b.gc) - (a.gp-a.gc) || b.gp - a.gp);
+
+        // Preenche de forma dinâmica (quem classificou primeiro assume as vagas provisórias)
+        populateMatchUI('sf1', sfTeams[0], sfTeams[3], '1º Colocado', '4º Colocado');
+        populateMatchUI('sf2', sfTeams[1], sfTeams[2], '2º Colocado', '3º Colocado');
+
+        // 3. Processar Semis simuladas (só processa os times que já existem ali)
+        let sfWinners = [];
+        ['sf1', 'sf2'].forEach(prefix => {
+            let container = document.getElementById(`${prefix}_container`);
+            if(!container) return;
+            
+            let mH = container.dataset.t1;
+            let mV = container.dataset.t2; 
+            
+            if (mH && mV) {
+                let el_iH = document.getElementById(`${prefix}_ih`);
+                let el_iA = document.getElementById(`${prefix}_ia`);
+                let el_vH = document.getElementById(`${prefix}_vh`);
+                let el_vA = document.getElementById(`${prefix}_va`);
+
+                if (el_iH && el_iA && el_vH && el_vA && el_iH.value !== "" && el_iA.value !== "" && el_vH.value !== "" && el_vA.value !== "") {
+                    let iH = parseInt(el_iH.value);
+                    let iA = parseInt(el_iA.value);
+                    let vH = parseInt(el_vH.value);
+                    let vA = parseInt(el_vA.value);
+
+                    updateStats(stats, mV, mH, iH, iA); // Ida
+                    updateStats(stats, mH, mV, vH, vA); // Volta
+
+                    sfWinners.push(calculateWinner(mH, mV, iA, iH, vH, vA, stats));
+                }
+            }
+        });
+
+        // 4. Exibir Finalistas
+        let finalTeams = sfWinners.map(n => ({name: n, ...stats[n]}))
+                .sort((a,b) => b.p - a.p || b.v - a.v || (b.gp-b.gc) - (a.gp-a.gc) || b.gp - a.gp);
+        
+        populateMatchUI('f', finalTeams[0], finalTeams[1], 'Finalista 1', 'Finalista 2');
+
+        let f_mH = document.getElementById('f_container') ? document.getElementById('f_container').dataset.t1 : null;
+        let f_mV = document.getElementById('f_container') ? document.getElementById('f_container').dataset.t2 : null;
+
+        if (f_mH && f_mV) {
+            let f_iH = document.getElementById('f_ih');
+            let f_iA = document.getElementById('f_ia');
+            let f_vH = document.getElementById('f_vh');
+            let f_vA = document.getElementById('f_va');
+
+            if (f_iH && f_iA && f_vH && f_vA && f_iH.value !== "" && f_iA.value !== "" && f_vH.value !== "" && f_vA.value !== "") {
+                updateStats(stats, f_mV, f_mH, parseInt(f_iH.value), parseInt(f_iA.value)); 
+                updateStats(stats, f_mH, f_mV, parseInt(f_vH.value), parseInt(f_vA.value)); 
+            }
+        }
+        
+        renderTable(stats);
+    }
+
+    // t1Obj e t2Obj são objetos com dados do time. Os defaults são os nomes genéricos em formato string.
+    function populateMatchUI(prefix, t1Obj, t2Obj, defaultT1, defaultT2) {
+        let container = document.getElementById(`${prefix}_container`);
+        if(!container) return;
+        
+        let t1Name = t1Obj ? t1Obj.name : defaultT1;
+        let t1Logo = t1Obj ? logos[t1Obj.name] : '';
+        let t2Name = t2Obj ? t2Obj.name : defaultT2;
+        let t2Logo = t2Obj ? logos[t2Obj.name] : '';
+
+        container.dataset.t1 = t1Obj ? t1Obj.name : '';
+        container.dataset.t2 = t2Obj ? t2Obj.name : '';
+
+        safeSetText(`${prefix}_ih_name`, t2Name);
+        safeSetImg(`${prefix}_ih_logo`, t2Logo);
+        safeSetText(`${prefix}_ia_name`, t1Name);
+        safeSetImg(`${prefix}_ia_logo`, t1Logo);
+
+        safeSetText(`${prefix}_vh_name`, t1Name);
+        safeSetImg(`${prefix}_vh_logo`, t1Logo);
+        safeSetText(`${prefix}_va_name`, t2Name);
+        safeSetImg(`${prefix}_va_logo`, t2Logo);
+    }
+
+    function renderTable(stats) {
+        const sorted = Object.keys(stats).map(n => ({name: n, ...stats[n]}))
+                      .sort((a,b) => b.p - a.p || b.v - a.v || (b.gp-b.gc) - (a.gp-a.gc) || b.gp - a.gp);
+        
+        let tBody = document.getElementById('table-body');
+        if(!tBody) return;
+
+        tBody.innerHTML = sorted.map((t, i) => `
+            <tr>
+                <td>${i+1}º</td><td class="td-team"><img src="${logos[t.name]}">${t.name}</td>
+                <td>${t.p}</td><td>${t.v}</td><td>${t.gp - t.gc}</td><td>${t.gp}</td>
+                <td>${Math.round((t.p/(t.j*3))*100) || 0}%</td>
+            </tr>
+        `).join('');
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const qfC = document.getElementById('qf-container');
+        if(qfC) {
+            qfC.innerHTML = qfMatches.map(m => `
+                <div class="match-group">
+                    <div class="match-row">
+                        <div class="label-game">IDA</div>
+                        <div class="team home"><span>${m.vVolta}</span><img src="${logos[m.vVolta]}"></div>
+                        <div class="scores"><input type="number" class="score-input" value="${m.resIdaV}" disabled><span>X</span><input type="number" class="score-input" value="${m.resIdaM}" disabled></div>
+                        <div class="team away"><img src="${logos[m.mVolta]}"><span>${m.mVolta}</span></div>
+                    </div>
+                    <div class="match-row">
+                        <div class="label-game">VOLTA</div>
+                        <div class="team home"><span>${m.mVolta}</span><img src="${logos[m.mVolta]}"></div>
+                        <div class="scores"><input type="number" class="score-input" id="${m.id}h" value=""><span>X</span><input type="number" class="score-input" id="${m.id}a" value=""></div>
+                        <div class="team away"><img src="${logos[m.vVolta]}"><span>${m.vVolta}</span></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.querySelector('.simulation-area').addEventListener('input', function(e) {
+            if(e.target.classList.contains('score-input')) {
+                runSimulation();
+            }
+        });
+
+        runSimulation();
+    });
+</script>
+</body>
+</html>
