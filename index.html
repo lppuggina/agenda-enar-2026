@@ -136,6 +136,13 @@
             background: #fdfdfd;
         }
 
+        .score-input:disabled {
+            background-color: #eee;
+            color: #333;
+            border-color: #ddd;
+            cursor: not-allowed;
+        }
+
         @media (max-width: 480px) {
             .team span { font-size: 0.75rem; }
             .team img { width: 22px; height: 22px; margin: 0 4px; }
@@ -200,7 +207,6 @@
         "São-Carlense": "https://api.fpf.org.br/filiacao/v1/entidades/CLUBE/13410/escudo?v=1640f948-dcae-4d46-a5b8-9bb0b48c5eed"
     };
 
-    // Dados consolidados após Quartas de Final (17 jogos)
     const baseStats = {
         "Inter de Bebedouro": { p: 39, j: 17, v: 12, e: 3, d: 2, gp: 25, gc: 6 },
         "São Caetano": { p: 33, j: 17, v: 10, e: 3, d: 4, gp: 24, gc: 14 },
@@ -249,12 +255,10 @@
             let vH = document.getElementById(m.id+'vh').value;
             let vA = document.getElementById(m.id+'va').value;
 
-            // Processar Ida sempre (Valores preenchidos conforme solicitação)
             if (iH !== "" && iA !== "") {
                 updateStats(stats, m.t2, m.t1, parseInt(iH), parseInt(iA));
             }
 
-            // Processar Volta se preenchido
             if (vH !== "" && vA !== "" && iH !== "" && iA !== "") {
                 let v_vH = parseInt(vH); let v_vA = parseInt(vA);
                 updateStats(stats, m.t1, m.t2, v_vH, v_vA);
@@ -310,7 +314,7 @@
                 <div class="match-row">
                     <div class="label-game">IDA</div>
                     <div class="team home"><span>${m.t2}</span><img src="${logos[m.t2]}"></div>
-                    <div class="scores"><input type="number" class="score-input" id="${m.id}ih" value="${m.resIdaT2}"><span>X</span><input type="number" class="score-input" id="${m.id}ia" value="${m.resIdaT1}"></div>
+                    <div class="scores"><input type="number" class="score-input" id="${m.id}ih" value="${m.resIdaT2}" disabled><span>X</span><input type="number" class="score-input" id="${m.id}ia" value="${m.resIdaT1}" disabled></div>
                     <div class="team away"><img src="${logos[m.t1]}"><span>${m.t1}</span></div>
                 </div>
                 <div class="match-info-header" style="margin-top:10px">${m.voltaInfo}</div>
