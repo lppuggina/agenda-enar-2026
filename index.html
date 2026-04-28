@@ -54,6 +54,7 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             padding: 15px;
             margin-bottom: 20px;
+            min-height: 50px;
         }
 
         .match-group {
@@ -61,7 +62,7 @@
             padding-bottom: 15px;
             margin-bottom: 15px;
         }
-        .match-group:last-child { border-bottom: none; }
+        .match-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
         .match-info-header {
             font-size: 0.7rem;
@@ -211,12 +212,14 @@
         { 
             id: 'sf1', t1: 'Inter de Bebedouro', t2: 'São-Carlense',
             idaInfo: 'Prof. Luís Augusto de Oliveira | 26/04 Dom 10h',
-            voltaInfo: 'Sócrates Stamato | 01/05 Sex 16h'
+            voltaInfo: 'Sócrates Stamato | 01/05 Sex 16h',
+            resIdaT2: 1, resIdaT1: 3
         },
         { 
             id: 'sf2', t1: 'São Caetano', t2: 'Penapolense',
             idaInfo: 'Tenente Carriço | 25/04 Sáb 19h',
-            voltaInfo: 'Anacleto Campanella | 02/05 Sáb 15h'
+            voltaInfo: 'Anacleto Campanella | 02/05 Sáb 15h',
+            resIdaT2: 2, resIdaT1: 1
         }
     ];
 
@@ -233,7 +236,6 @@
         let aggV = gV_i + gV_v;
         if (aggH > aggV) return mH;
         if (aggV > aggH) return mV;
-        // Critério do Art. 14 § 1º: Melhor campanha geral se empate no agregado
         return baseStats[mH].p >= baseStats[mV].p ? mH : mV;
     }
 
@@ -247,19 +249,19 @@
             let vH = document.getElementById(m.id+'vh').value;
             let vA = document.getElementById(m.id+'va').value;
 
-            // Só processa se houver valores
-            if (iH !== "" && iA !== "" && vH !== "" && vA !== "") {
-                let v_iH = parseInt(iH); let v_iA = parseInt(iA);
+            // Processar Ida sempre (Valores preenchidos conforme solicitação)
+            if (iH !== "" && iA !== "") {
+                updateStats(stats, m.t2, m.t1, parseInt(iH), parseInt(iA));
+            }
+
+            // Processar Volta se preenchido
+            if (vH !== "" && vA !== "" && iH !== "" && iA !== "") {
                 let v_vH = parseInt(vH); let v_vA = parseInt(vA);
-
-                updateStats(stats, m.t2, m.t1, v_iH, v_iA); // Ida (mando do pior campanha)
-                updateStats(stats, m.t1, m.t2, v_vH, v_vA); // Volta (mando do melhor campanha)
-
-                sfWinners.push(getWinner(m.t1, m.t2, v_iA, v_iH, v_vH, v_vA, stats));
+                updateStats(stats, m.t1, m.t2, v_vH, v_vA);
+                sfWinners.push(getWinner(m.t1, m.t2, parseInt(iA), parseInt(iH), v_vH, v_vA, stats));
             }
         });
 
-        // Atualizar Finalistas (Art. 13)
         let fContainer = document.getElementById('f-container');
         if(sfWinners.length === 2) {
             let fTeams = sfWinners.map(n => ({name: n, ...stats[n]}))
@@ -283,7 +285,7 @@
                     </div>
                 </div>`;
         } else {
-            fContainer.innerHTML = '<div style="text-align:center; font-size:0.8rem; color:#888;">Preencha os resultados das semis para definir os finalistas.</div>';
+            fContainer.innerHTML = '<div style="text-align:center; font-size:0.8rem; color:#888;">Preencha os resultados de volta para definir os finalistas.</div>';
         }
 
         renderTable(stats);
@@ -308,7 +310,7 @@
                 <div class="match-row">
                     <div class="label-game">IDA</div>
                     <div class="team home"><span>${m.t2}</span><img src="${logos[m.t2]}"></div>
-                    <div class="scores"><input type="number" class="score-input" id="${m.id}ih" value=""><span>X</span><input type="number" class="score-input" id="${m.id}ia" value=""></div>
+                    <div class="scores"><input type="number" class="score-input" id="${m.id}ih" value="${m.resIdaT2}"><span>X</span><input type="number" class="score-input" id="${m.id}ia" value="${m.resIdaT1}"></div>
                     <div class="team away"><img src="${logos[m.t1]}"><span>${m.t1}</span></div>
                 </div>
                 <div class="match-info-header" style="margin-top:10px">${m.voltaInfo}</div>
