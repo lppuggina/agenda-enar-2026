@@ -3,333 +3,242 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAULISTÃO A4 RIVALO 2026</title>
+    <title>Organizador de Agenda - ENAR Anatel 2026</title>
     <style>
         :root {
-            --ge-green: #06aa48;
-            --ge-dark: #333;
-            --ge-gray: #f1f1f1;
-            --white: #ffffff;
-            --border: #e2e2e2;
+            --anatel-blue: #003366;
+            --anatel-light: #006699;
+            --bg-gray: #f4f6f9;
+            --card-white: #ffffff;
+            --border-color: #d1d5db;
+            
+            /* Cores dos Macrotemas */
+            --color-treinamento: #3b82f6;
+            --color-orientacoes: #f97316;
+            --color-integracao: #10b981;
+            --color-conhecimento: #8b5cf6;
+            --color-melhorias: #06b6d4;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
         }
 
         body {
-            font-family: "Open Sans", Arial, sans-serif;
-            background-color: var(--ge-gray);
+            background-color: var(--bg-gray);
             margin: 0;
-            color: var(--ge-dark);
+            padding: 0;
+            color: #333;
         }
 
         header {
-            background-color: var(--white);
+            background-color: var(--anatel-blue);
+            color: white;
             padding: 20px;
-            border-bottom: 5px solid var(--ge-green);
             text-align: center;
+            border-bottom: 4px solid var(--anatel-light);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .main-layout {
+        header h1 {
+            margin: 0;
+            font-size: 1.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        header p {
+            margin: 5px 0 0 0;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 25px auto;
+            padding: 0 15px;
+        }
+
+        .board {
             display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            max-width: 1300px;
-            margin: 20px auto;
-            padding: 0 10px;
+            align-items: start;
         }
 
         @media (max-width: 1024px) {
-            .main-layout { grid-template-columns: 1fr; }
+            .board {
+                grid-template-columns: 1fr;
+            }
         }
 
-        h2 {
-            text-transform: uppercase;
-            font-size: 1.1rem;
-            border-left: 4px solid var(--ge-green);
-            padding-left: 10px;
-            margin: 20px 0 15px 0;
-        }
-
-        .card {
-            background: var(--white);
+        .column {
+            background-color: #eaedf2;
             border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
             padding: 15px;
-            margin-bottom: 20px;
-            min-height: 50px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
-        .match-group {
-            border-bottom: 1px solid #eee;
-            padding-bottom: 15px;
+        .column-header {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
             margin-bottom: 15px;
         }
-        .match-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
-        .match-info-header {
-            font-size: 0.7rem;
-            color: #666;
+        .column-title {
+            font-size: 1.15rem;
             font-weight: bold;
-            margin-bottom: 5px;
-            text-align: center;
-            background: #fafafa;
-            padding: 4px;
-            border-radius: 4px;
+            color: var(--anatel-blue);
+            margin: 0;
         }
 
-        .match-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 8px 0;
-            gap: 5px;
-        }
-
-        .label-game {
-            font-size: 0.65rem;
-            color: #888;
-            font-weight: bold;
-            width: 35px;
-            text-align: center;
-            flex-shrink: 0;
-        }
-
-        .team {
-            display: flex;
-            align-items: center;
-            flex: 1;
-            min-width: 0; 
-        }
-
-        .team.home { justify-content: flex-end; }
-        .team.away { justify-content: flex-start; }
-
-        .team span {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        .column-time {
             font-size: 0.85rem;
-            font-weight: bold;
+            color: #555;
+            margin-top: 4px;
+            background-color: #fff;
+            padding: 2px 8px;
+            border-radius: 20px;
+            display: inline-block;
+            width: fit-content;
+            border: 1px solid #d1d5db;
+            font-weight: 600;
         }
 
-        .team img {
-            width: 28px;
-            height: 28px;
-            margin: 0 8px;
-            flex-shrink: 0;
-            object-fit: contain;
-        }
-
-        .scores {
+        .column-body {
+            min-height: 500px;
             display: flex;
-            align-items: center;
-            gap: 5px;
-            flex-shrink: 0;
+            flex-direction: column;
+            gap: 12px;
+            padding-bottom: 100px; /* Área extra para soltar cards facilmente */
         }
 
-        .score-input {
-            width: 35px;
-            height: 30px;
-            text-align: center;
-            font-size: 1rem;
+        /* Estilização Base dos Blocos de Temas */
+        .item-card {
+            background-color: var(--card-white);
+            border-radius: 6px;
+            border-left: 5px solid #ccc;
+            padding: 10px 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            cursor: grab;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .item-card:active {
+            cursor: grabbing;
+        }
+
+        .item-card.dragging {
+            opacity: 0.4;
+            transform: scale(0.98);
+        }
+
+        .item-title {
+            font-size: 0.9rem;
             font-weight: bold;
-            border: 1px solid #ccc;
+            color: #1f2937;
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+        }
+
+        .item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            padding: 2px 6px;
             border-radius: 4px;
-            background: #fdfdfd;
+            color: white;
         }
 
-        .score-input:disabled {
-            background-color: #eee;
-            color: #333;
-            border-color: #ddd;
-            cursor: not-allowed;
+        .item-duration {
+            font-size: 0.75rem;
+            color: #6b7280;
+            font-weight: 600;
         }
 
-        @media (max-width: 480px) {
-            .team span { font-size: 0.75rem; }
-            .team img { width: 22px; height: 22px; margin: 0 4px; }
-            .score-input { width: 30px; height: 28px; font-size: 0.95rem; }
-        }
+        /* Cores dinâmicas injetadas ou mapeadas por classe */
+        .badge-treinamento { background-color: var(--color-treinamento); }
+        .badge-orientacoes { background-color: var(--color-orientacoes); }
+        .badge-integracao { background-color: var(--color-integracao); }
+        .badge-conhecimento { background-color: var(--color-conhecimento); }
+        .badge-melhorias { background-color: var(--color-melhorias); }
 
-        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
-        th { background: #f8f8f8; padding: 10px 3px; text-align: center; border-bottom: 2px solid var(--border); }
-        td { padding: 8px 3px; text-align: center; border-bottom: 1px solid var(--border); }
-        .td-team { text-align: left; font-weight: bold; display: flex; align-items: center; }
-        .td-team img { width: 16px; height: 16px; margin-right: 6px; }
-
+        .border-treinamento { border-left-color: var(--color-treinamento); }
+        .border-orientacoes { border-left-color: var(--color-orientacoes); }
+        .border-integracao { border-left-color: var(--color-integracao); }
+        .border-conhecimento { border-left-color: var(--color-conhecimento); }
+        .border-melhorias { border-left-color: var(--color-melhorias); }
     </style>
 </head>
 <body>
 
 <header>
-    <h1 style="margin:0; letter-spacing: 1px; font-size: 1.4rem;">PAULISTÃO A4 RIVALO 2026</h1>
+    <h1>Anatel - Gestão de Agenda Legislada</h1>
+    <p>Encontro dos Servidores da Área de Arrecadação e Cobrança | ENAR 2026</p>
 </header>
 
-<div class="main-layout">
-    <div class="simulation-area">
-        
-        <h2>Semifinais</h2>
-        <div class="card" id="sf-container">
+<div class="container">
+    <div class="board">
+        <div class="column" data-day="1">
+            <div class="column-header">
+                <span class="column-title">Dia 1</span>
+                <span class="column-time" id="total-day-1">0.0 horas</span>
             </div>
-
-        <div id="f-section">
-            <h2>Grande Final</h2>
-            <div class="card" id="f-container">
-                </div>
+            <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, 1)"></div>
         </div>
 
-    </div>
+        <div class="column" data-day="2">
+            <div class="column-header">
+                <span class="column-title">Dia 2</span>
+                <span class="column-time" id="total-day-2">0.0 horas</span>
+            </div>
+            <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, 2)"></div>
+        </div>
 
-    <div class="table-area">
-        <h2>Classificação Geral</h2>
-        <div class="card" style="overflow-x: auto;">
-            <table id="leaderboard">
-                <thead>
-                    <tr>
-                        <th>Pos</th>
-                        <th>Time</th>
-                        <th>P</th>
-                        <th>V</th>
-                        <th>SG</th>
-                        <th>GP</th>
-                        <th>%</th>
-                    </tr>
-                </thead>
-                <tbody id="table-body"></tbody>
-            </table>
+        <div class="column" data-day="3">
+            <div class="column-header">
+                <span class="column-title">Dia 3</span>
+                <span class="column-time" id="total-day-3">0.0 horas</span>
+            </div>
+            <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, 3)"></div>
         </div>
     </div>
 </div>
 
 <script>
-    const logos = {
-        "Inter de Bebedouro": "https://api.fpf.org.br/filiacao/v1/entidades/CLUBE/256/escudo?v=47a27f0d-6498-47f0-af1e-ac2c61b5f57c",
-        "São Caetano": "https://api.fpf.org.br/filiacao/v1/entidades/CLUBE/3389/escudo?v=3651cc3f-80a1-4301-9b78-da1c10dd523b",
-        "Penapolense": "https://api.fpf.org.br/filiacao/v1/entidades/CLUBE/3333/escudo?v=c25a8fd2-682c-499f-83fd-ae5b6a212129",
-        "São-Carlense": "https://api.fpf.org.br/filiacao/v1/entidades/CLUBE/13410/escudo?v=1640f948-dcae-4d46-a5b8-9bb0b48c5eed"
-    };
-
-    const baseStats = {
-        "Inter de Bebedouro": { p: 39, j: 17, v: 12, e: 3, d: 2, gp: 25, gc: 6 },
-        "São Caetano": { p: 33, j: 17, v: 10, e: 3, d: 4, gp: 24, gc: 14 },
-        "Penapolense": { p: 31, j: 17, v: 8, e: 7, d: 2, gp: 25, gc: 13 },
-        "São-Carlense": { p: 30, j: 17, v: 8, e: 6, d: 3, gp: 22, gc: 14 }
-    };
-
-    const sfMatches = [
-        { 
-            id: 'sf1', t1: 'Inter de Bebedouro', t2: 'São-Carlense',
-            idaInfo: 'Prof. Luís Augusto de Oliveira | 26/04 Dom 10h',
-            voltaInfo: 'Sócrates Stamato | 01/05 Sex 16h',
-            resIdaT2: 1, resIdaT1: 3
-        },
-        { 
-            id: 'sf2', t1: 'São Caetano', t2: 'Penapolense',
-            idaInfo: 'Tenente Carriço | 25/04 Sáb 19h',
-            voltaInfo: 'Anacleto Campanella | 02/05 Sáb 15h',
-            resIdaT2: 2, resIdaT1: 1
-        }
-    ];
-
-    function updateStats(s, home, away, gh, ga) {
-        if(!s[home] || !s[away]) return;
-        s[home].j++; s[away].j++; s[home].gp += gh; s[home].gc += ga; s[away].gp += ga; s[away].gc += gh;
-        if(gh > ga) { s[home].p += 3; s[home].v++; }
-        else if(ga > gh) { s[away].p += 3; s[away].v++; }
-        else { s[home].p += 1; s[away].p += 1; }
-    }
-
-    function getWinner(mH, mV, gH_i, gV_i, gH_v, gV_v, stats) {
-        let aggH = gH_i + gH_v;
-        let aggV = gV_i + gV_v;
-        if (aggH > aggV) return mH;
-        if (aggV > aggH) return mV;
-        return baseStats[mH].p >= baseStats[mV].p ? mH : mV;
-    }
-
-    function runSimulation() {
-        let stats = JSON.parse(JSON.stringify(baseStats));
-        let sfWinners = [];
-
-        sfMatches.forEach(m => {
-            let iH = document.getElementById(m.id+'ih').value;
-            let iA = document.getElementById(m.id+'ia').value;
-            let vH = document.getElementById(m.id+'vh').value;
-            let vA = document.getElementById(m.id+'va').value;
-
-            if (iH !== "" && iA !== "") {
-                updateStats(stats, m.t2, m.t1, parseInt(iH), parseInt(iA));
-            }
-
-            if (vH !== "" && vA !== "" && iH !== "" && iA !== "") {
-                let v_vH = parseInt(vH); let v_vA = parseInt(vA);
-                updateStats(stats, m.t1, m.t2, v_vH, v_vA);
-                sfWinners.push(getWinner(m.t1, m.t2, parseInt(iA), parseInt(iH), v_vH, v_vA, stats));
-            }
-        });
-
-        let fContainer = document.getElementById('f-container');
-        if(sfWinners.length === 2) {
-            let fTeams = sfWinners.map(n => ({name: n, ...stats[n]}))
-                        .sort((a,b) => b.p - a.p || b.v - a.v || (b.gp-b.gc) - (a.gp-a.gc) || b.gp - a.gp);
-            
-            fContainer.innerHTML = `
-                <div class="match-group">
-                    <div class="match-info-header">JOGO DE IDA</div>
-                    <div class="match-row">
-                        <div class="label-game">IDA</div>
-                        <div class="team home"><span>${fTeams[1].name}</span><img src="${logos[fTeams[1].name]}"></div>
-                        <div class="scores"><input type="number" class="score-input" value=""><span>X</span><input type="number" class="score-input" value=""></div>
-                        <div class="team away"><img src="${logos[fTeams[0].name]}"><span>${fTeams[0].name}</span></div>
-                    </div>
-                    <div class="match-info-header" style="margin-top:10px">JOGO DE VOLTA</div>
-                    <div class="match-row">
-                        <div class="label-game">VOLTA</div>
-                        <div class="team home"><span>${fTeams[0].name}</span><img src="${logos[fTeams[0].name]}"></div>
-                        <div class="scores"><input type="number" class="score-input" value=""><span>X</span><input type="number" class="score-input" value=""></div>
-                        <div class="team away"><img src="${logos[fTeams[1].name]}"><span>${fTeams[1].name}</span></div>
-                    </div>
-                </div>`;
-        } else {
-            fContainer.innerHTML = '<div style="text-align:center; font-size:0.8rem; color:#888;">Preencha os resultados de volta para definir os finalistas.</div>';
-        }
-
-        renderTable(stats);
-    }
-
-    function renderTable(stats) {
-        const sorted = Object.keys(stats).map(n => ({name: n, ...stats[n]}))
-                      .sort((a,b) => b.p - a.p || b.v - a.v || (b.gp-b.gc) - (a.gp-a.gc) || b.gp - a.gp);
-        document.getElementById('table-body').innerHTML = sorted.map((t, i) => `
-            <tr>
-                <td>${i+1}º</td><td class="td-team"><img src="${logos[t.name]}">${t.name}</td>
-                <td>${t.p}</td><td>${t.v}</td><td>${t.gp - t.gc}</td><td>${t.gp}</td>
-                <td>${Math.round((t.p/(t.j*3))*100) || 0}%</td>
-            </tr>
-        `).join('');
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById('sf-container').innerHTML = sfMatches.map(m => `
-            <div class="match-group">
-                <div class="match-info-header">${m.idaInfo}</div>
-                <div class="match-row">
-                    <div class="label-game">IDA</div>
-                    <div class="team home"><span>${m.t2}</span><img src="${logos[m.t2]}"></div>
-                    <div class="scores"><input type="number" class="score-input" id="${m.id}ih" value="${m.resIdaT2}" disabled><span>X</span><input type="number" class="score-input" id="${m.id}ia" value="${m.resIdaT1}" disabled></div>
-                    <div class="team away"><img src="${logos[m.t1]}"><span>${m.t1}</span></div>
-                </div>
-                <div class="match-info-header" style="margin-top:10px">${m.voltaInfo}</div>
-                <div class="match-row">
-                    <div class="label-game">VOLTA</div>
-                    <div class="team home"><span>${m.t1}</span><img src="${logos[m.t1]}"></div>
-                    <div class="scores"><input type="number" class="score-input" id="${m.id}vh" value=""><span>X</span><input type="number" class="score-input" id="${m.id}va" value=""></div>
-                    <div class="team away"><img src="${logos[m.t2]}"><span>${m.t2}</span></div>
-                </div>
-            </div>
-        `).join('');
-
-        document.querySelector('.simulation-area').addEventListener('input', runSimulation);
-        runSimulation();
-    });
-</script>
-</body>
-</html>
+    // Carga de dados inicial extraída da planilha fornecida
+    let agendaData = [
+        { id: 1, day: 1, macro: "Treinamento", time: 90, title: "Redirecionamento de créditos - entidades baixadas" },
+        { id: 2, day: 1, macro: "Orientações", time: 30, title: "Ministério das comunicações - situação da outorga de entidades de radiodifusão baixadas" },
+        { id: 3, day: 1, macro: "Integração", time: 30, title: "Dinâmicas de Integração" },
+        { id: 4, day: 1, macro: "Orientações", time: 60, title: "Apresentação da coletânea dos Pareceres" },
+        { id: 5, day: 1, macro: "Orientações", time: 30, title: "Calendário Unificado de Notificações" },
+        { id: 6, day: 1, macro: "Treinamento", time: 60, title: "AFFO5 (dashboards)" },
+        { id: 7, day: 1, macro: "Conhecimento", time: 15, title: "Fluxos de consulta no CADIN" },
+        { id: 8, day: 1, macro: "Conhecimento", time: 60, title: "Benchmarking – Órgãos externos" },
+        { id: 9, day: 1, macro: "Treinamento", time: 60, title: "Dicas operacionais do SIGEC" },
+        { id: 10, day: 1, macro: "Melhorias", time: 60, title: "Importância da arrecadação aos GR’s" },
+        { id: 11, day: 1, macro: "Conhecimento", time: 30, title: "Revisão dos valores de inscrição em dívida e execução" },
+        
+        { id: 12, day: 2, macro: "Treinamento", time: 120, title: "Sistema ARCO (conhecimentos avançados)" },
+        { id: 13, day: 2, macro: "Orientações", time: 30, title: "Tratamento de Impugnação de lançamentos" },
+        { id: 14, day: 2, macro: "Integração", time: 30, title: "Dinâmicas de Grupo" },
+        { id: 15, day: 2, macro: "Orientações", time: 60, title: "Demandas da procuradoria ou ENAC: O que queremos trazer para nós?" },
+        { id: 16, day: 2, macro: "Conhecimento", time: 30, title: "AFFO5 (demandas de contribuintes)" },
+        { id: 17, day: 2, macro: "Conhecimento", time: 30, title: "ARCO Boleto: explicação, diferenças para o sistema convencional" },
+        { id: 18, day: 2, macro: "Treinamento", time
