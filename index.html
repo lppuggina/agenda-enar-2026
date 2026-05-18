@@ -171,4 +171,171 @@
 
         .badge-treinamento { background-color: var(--color-treinamento); }
         .badge-orientacoes { background-color: var(--color-orientacoes); }
-        .badge-integracao { background-color: var
+        .badge-integracao { background-color: var(--color-integracao); }
+        .badge-conhecimento { background-color: var(--color-conhecimento); }
+        .badge-melhorias { background-color: var(--color-melhorias); }
+
+        .border-treinamento { border-left-color: var(--color-treinamento); }
+        .border-orientacoes { border-left-color: var(--color-orientacoes); }
+        .border-integracao { border-left-color: var(--color-integracao); }
+        .border-conhecimento { border-left-color: var(--color-conhecimento); }
+        .border-melhorias { border-left-color: var(--color-melhorias); }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Anatel - Gestão de Agenda Legislada</h1>
+    <p>Encontro dos Servidores da Área de Arrecadação e Cobrança | ENAR 2026</p>
+</header>
+
+<div class="container">
+    <div class="board">
+        <div class="column" data-day="1">
+            <div class="column-header">
+                <span class="column-title">Dia 1</span>
+                <span class="column-time" id="total-day-1">0.0 horas</span>
+            </div>
+            <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, 1)"></div>
+        </div>
+
+        <div class="column" data-day="2">
+            <div class="column-header">
+                <span class="column-title">Dia 2</span>
+                <span class="column-time" id="total-day-2">0.0 horas</span>
+            </div>
+            <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, 2)"></div>
+        </div>
+
+        <div class="column" data-day="3">
+            <div class="column-header">
+                <span class="column-title">Dia 3</span>
+                <span class="column-time" id="total-day-3">0.0 horas</span>
+            </div>
+            <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, 3)"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Base de dados 100% atualizada com base na planilha oficial 
+    let agendaData = [
+        // DIA 1 [cite: 341]
+        { id: 2, day: 1, macro: "Treinamento", classId: "treinamento", time: 90, title: "Redirecionamento de créditos - entidades baixadas" },
+        { id: 3, day: 1, macro: "Orientações", classId: "orientacoes", time: 30, title: "Ministério das comunicações - situação da outorga de entidades de radiodifusão baixadas" },
+        { id: 14, day: 1, macro: "Integração", classId: "integracao", time: 30, title: "Dinâmicas" },
+        { id: 18, day: 1, macro: "Orientações", classId: "orientacoes", time: 60, title: "Apresentação da coletânea dos Pareceres" },
+        { id: 19, day: 1, macro: "Orientações", classId: "orientacoes", time: 30, title: "Calendário Unificado de Notificações" },
+        { id: 20, day: 1, macro: "Treinamento", classId: "treinamento", time: 60, title: "AFFO5 (dashboards)" },
+        { id: 29, day: 1, macro: "Conhecimento", classId: "conhecimento", time: 15, title: "CADIN" },
+        { id: 30, day: 1, macro: "Conhecimento", classId: "conhecimento", time: 60, title: "Benchmarking – Órgãos externos" },
+        { id: 32, day: 1, macro: "Treinamento", classId: "treinamento", time: 60, title: "Dicas do SIGEC" },
+        { id: 35, day: 1, macro: "Melhorias", classId: "melhorias", time: 60, title: "Importância da arrecadação aos GR’s" },
+        { id: 36, day: 1, macro: "Conhecimento", classId: "conhecimento", time: 30, title: "Revisão dos valores de inscrição em dívida e execução" },
+        
+        // DIA 2 [cite: 341, 342]
+        { id: 5, day: 2, macro: "Treinamento", classId: "treinamento", time: 120, title: "Arco (conhecimentos)" },
+        { id: 7, day: 2, macro: "Orientações", classId: "orientacoes", time: 30, title: "Impugnação" },
+        { id: 15, day: 2, macro: "Integração", classId: "integracao", time: 30, title: "Dinâmicas" },
+        { id: 17, day: 2, macro: "Orientações", classId: "orientacoes", time: 60, title: "O que queremos saber da procuradoria ou ENAC. Ou o que eles querem trazer para nós?" },
+        { id: 21, day: 2, macro: "Conhecimento", classId: "conhecimento", time: 30, title: "AFFO5 (demandas de contribuintes)" },
+        { id: 22, day: 2, macro: "Conhecimento", classId: "conhecimento", time: 30, title: "ARCO Boleto: explicação, diferenças para o sistema boleto;" },
+        { id: 25, day: 2, macro: "Treinamento", classId: "treinamento", time: 15, title: "Prioridade de Notificação Eletrônica" },
+        { id: 26, day: 2, macro: "Conhecimento", classId: "conhecimento", time: 15, title: "Notifica.br" },
+        { id: 27, day: 2, macro: "Conhecimento", classId: "conhecimento", time: 15, title: "Domicílio Judicial Eletrônico" },
+        { id: 28, day: 2, macro: "Conhecimento", classId: "conhecimento", time: 30, title: "Suspensão da exigibilidade dos créditos" },
+        { id: 33, day: 2, macro: "Conhecimento", classId: "conhecimento", time: 60, title: "IA (automação power automate)" },
+        
+        // DIA 3 
+        { id: 4, day: 3, macro: "Orientações", classId: "orientacoes", time: 60, title: "Tratamento de multas administrativas 5343" },
+        { id: 6, day: 3, macro: "Orientações", classId: "orientacoes", time: 60, title: "Avaliar se falamos das multas 1660, 1661" },
+        { id: 13, day: 3, macro: "Orientações", classId: "orientacoes", time: 60, title: "Corregedoria" },
+        { id: 16, day: 3, macro: "Integração", classId: "integracao", time: 30, title: "Dinâmicas" },
+        { id: 23, day: 3, macro: "Conhecimento", classId: "conhecimento", time: 30, title: "AFFO5 (atividades)" },
+        { id: 24, day: 3, macro: "Conhecimento", classId: "conhecimento", time: 60, title: "Alinhamento teórico sobre arrecadação do FUST. Interessante mas não prioritário." },
+        { id: 31, day: 3, macro: "Melhorias", classId: "melhorias", time: 60, title: "Momento para análise de feedbacks, sugestões e críticas de outras áreas com as quais interagimos (ENAC, SOR, SCO, SGI, etc)" },
+        { id: 34, day: 3, macro: "Conhecimento", classId: "conhecimento", time: 60, title: "IA (prompts. Casos concretos)" },
+        { id: 37, day: 3, macro: "Conhecimento", classId: "conhecimento", time: 30, title: "Apresentar a página da gr11or que contém informações de outorga e arrecadação" },
+        { id: 38, day: 3, macro: "Conhecimento", classId: "conhecimento", time: 30, title: "Projetos de melhoria da AFFO (toda a AFFO estará trabalhando projetos em 2026)" },
+        { id: 39, day: 3, macro: "Conhecimento", classId: "conhecimento", time: 45, title: "Projetos de melhoria da AFFO (toda a AFFO estará trabalhando projetos em 2026)" }
+    ];
+
+    function renderBoard() {
+        document.querySelectorAll('.column-body').forEach(col => col.innerHTML = '');
+
+        agendaData.forEach(item => {
+            const columnBody = document.querySelector(`.column[data-day="${item.day}"] .column-body`);
+            if (!columnBody) return;
+
+            const card = document.createElement('div');
+            card.className = `item-card border-${item.classId}`;
+            card.setAttribute('draggable', 'true');
+            card.setAttribute('id', `item-${item.id}`);
+            
+            card.style.minHeight = `${65 + (item.time * 0.6)}px`;
+
+            card.innerHTML = `
+                <p class="item-title">${item.title}</p>
+                <div class="item-meta">
+                    <span class="badge badge-${item.classId}">${item.macro}</span>
+                    <span class="item-duration">${item.time} min</span>
+                </div>
+            `;
+
+            card.addEventListener('dragstart', (e) => {
+                card.classList.add('dragging');
+                e.dataTransfer.setData('text/plain', item.id);
+            });
+
+            card.addEventListener('dragend', () => {
+                card.classList.remove('dragging');
+            });
+
+            columnBody.appendChild(card);
+        });
+
+        calculateDailyHours();
+    }
+
+    function calculateDailyHours() {
+        [1, 2, 3].forEach(day => {
+            const totalMinutes = agendaData
+                .filter(item => item.day === day)
+                .reduce((sum, item) => sum + item.time, 0);
+
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            const decimalHours = (totalMinutes / 60).toFixed(2);
+
+            const labelElement = document.getElementById(`total-day-${day}`);
+            if (labelElement) {
+                if (totalMinutes === 0) {
+                    labelElement.innerText = "0 horas (Vazio)";
+                } else {
+                    labelElement.innerText = `${hours}h ${minutes}min (${decimalHours}h)`;
+                }
+            }
+        });
+    }
+
+    function allowDrop(e) {
+        e.preventDefault();
+    }
+
+    function drop(e, targetDay) {
+        e.preventDefault();
+        const itemId = e.dataTransfer.getData('text/plain');
+        
+        const itemIndex = agendaData.findIndex(i => i.id == itemId);
+        if (itemIndex !== -1) {
+            agendaData[itemIndex].day = targetDay;
+            renderBoard(); 
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        renderBoard();
+    });
+</script>
+</body>
+</html>
