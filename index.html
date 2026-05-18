@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organizador de Agenda - ENAR Anatel 2026</title>
+    <title>Agenda ENAR 2026</title>
     <style>
         :root {
             --anatel-blue: #003366;
@@ -39,38 +39,67 @@
             text-align: center;
             border-bottom: 4px solid var(--anatel-light);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
         }
 
         header h1 {
             margin: 0;
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        header p {
-            margin: 5px 0 0 0;
-            font-size: 0.95rem;
-            opacity: 0.9;
+        .action-bar {
+            max-width: 1400px;
+            margin: 20px auto 0 auto;
+            padding: 0 15px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-export {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: background-color 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-export:hover {
+            background-color: #059669;
+        }
+
+        .btn-export:active {
+            transform: scale(0.98);
         }
 
         .container {
             max-width: 1400px;
-            margin: 25px auto;
+            margin: 10px auto 25px auto;
             padding: 0 15px;
         }
 
         .board {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
             align-items: start;
         }
 
-        @media (max-width: 1024px) {
-            .board {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 1200px) {
+            .board { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 650px) {
+            .board { grid-template-columns: 1fr; }
         }
 
         .column {
@@ -81,16 +110,23 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
+        .column-reserva {
+            background-color: #e5e7eb;
+            border-style: dashed;
+            border-width: 2px;
+        }
+
         .column-header {
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
             border-bottom: 2px solid var(--border-color);
             padding-bottom: 10px;
             margin-bottom: 15px;
         }
 
         .column-title {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             font-weight: bold;
             color: var(--anatel-blue);
             margin: 0;
@@ -98,19 +134,17 @@
 
         .column-time {
             font-size: 0.85rem;
-            color: #555;
-            margin-top: 4px;
+            color: #333;
             background-color: #fff;
-            padding: 2px 8px;
+            padding: 2px 10px;
             border-radius: 20px;
-            display: inline-block;
-            width: fit-content;
             border: 1px solid #d1d5db;
-            font-weight: 600;
+            font-weight: bold;
+            font-family: monospace;
         }
 
         .column-body {
-            min-height: 500px;
+            min-height: 600px;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -140,7 +174,7 @@
         }
 
         .item-title {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: bold;
             color: #1f2937;
             margin: 0 0 8px 0;
@@ -155,7 +189,7 @@
         }
 
         .badge {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             text-transform: uppercase;
             font-weight: bold;
             padding: 2px 6px;
@@ -185,16 +219,29 @@
 <body>
 
 <header>
-    <h1>Anatel - Gestão de Agenda Legislada</h1>
-    <p>Encontro dos Servidores da Área de Arrecadação e Cobrança | ENAR 2026</p>
+    <h1>Agenda ENAR 2026</h1>
 </header>
+
+<div class="action-bar">
+    <button class="btn-export" onclick="exportToExcel()">
+        📊 Exportar Planilha
+    </button>
+</div>
 
 <div class="container">
     <div class="board">
+        <div class="column column-reserva" data-day="0">
+            <div class="column-header">
+                <span class="column-title">Reserva</span>
+                <span class="column-time" id="total-day-0">00:00</span>
+            </div>
+            <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, 0)"></div>
+        </div>
+
         <div class="column" data-day="1">
             <div class="column-header">
                 <span class="column-title">Dia 1</span>
-                <span class="column-time" id="total-day-1">0.0 horas</span>
+                <span class="column-time" id="total-day-1">00:00</span>
             </div>
             <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, 1)"></div>
         </div>
@@ -202,7 +249,7 @@
         <div class="column" data-day="2">
             <div class="column-header">
                 <span class="column-title">Dia 2</span>
-                <span class="column-time" id="total-day-2">0.0 horas</span>
+                <span class="column-time" id="total-day-2">00:00</span>
             </div>
             <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, 2)"></div>
         </div>
@@ -210,7 +257,7 @@
         <div class="column" data-day="3">
             <div class="column-header">
                 <span class="column-title">Dia 3</span>
-                <span class="column-time" id="total-day-3">0.0 horas</span>
+                <span class="column-time" id="total-day-3">00:00</span>
             </div>
             <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, 3)"></div>
         </div>
@@ -218,9 +265,9 @@
 </div>
 
 <script>
-    // Base de dados 100% atualizada com base na planilha oficial 
+    // Base de dados completa alinhada perfeitamente com a planilha fornecida
     let agendaData = [
-        // DIA 1 [cite: 341]
+        // DIA 1 
         { id: 2, day: 1, macro: "Treinamento", classId: "treinamento", time: 90, title: "Redirecionamento de créditos - entidades baixadas" },
         { id: 3, day: 1, macro: "Orientações", classId: "orientacoes", time: 30, title: "Ministério das comunicações - situação da outorga de entidades de radiodifusão baixadas" },
         { id: 14, day: 1, macro: "Integração", classId: "integracao", time: 30, title: "Dinâmicas" },
@@ -233,7 +280,7 @@
         { id: 35, day: 1, macro: "Melhorias", classId: "melhorias", time: 60, title: "Importância da arrecadação aos GR’s" },
         { id: 36, day: 1, macro: "Conhecimento", classId: "conhecimento", time: 30, title: "Revisão dos valores de inscrição em dívida e execução" },
         
-        // DIA 2 [cite: 341, 342]
+        // DIA 2 [cite: 1, 2]
         { id: 5, day: 2, macro: "Treinamento", classId: "treinamento", time: 120, title: "Arco (conhecimentos)" },
         { id: 7, day: 2, macro: "Orientações", classId: "orientacoes", time: 30, title: "Impugnação" },
         { id: 15, day: 2, macro: "Integração", classId: "integracao", time: 30, title: "Dinâmicas" },
@@ -246,7 +293,7 @@
         { id: 28, day: 2, macro: "Conhecimento", classId: "conhecimento", time: 30, title: "Suspensão da exigibilidade dos créditos" },
         { id: 33, day: 2, macro: "Conhecimento", classId: "conhecimento", time: 60, title: "IA (automação power automate)" },
         
-        // DIA 3 
+        // DIA 3 [cite: 2, 3]
         { id: 4, day: 3, macro: "Orientações", classId: "orientacoes", time: 60, title: "Tratamento de multas administrativas 5343" },
         { id: 6, day: 3, macro: "Orientações", classId: "orientacoes", time: 60, title: "Avaliar se falamos das multas 1660, 1661" },
         { id: 13, day: 3, macro: "Orientações", classId: "orientacoes", time: 60, title: "Corregedoria" },
@@ -272,7 +319,7 @@
             card.setAttribute('draggable', 'true');
             card.setAttribute('id', `item-${item.id}`);
             
-            card.style.minHeight = `${65 + (item.time * 0.6)}px`;
+            card.style.minHeight = `${65 + (item.time * 0.5)}px`;
 
             card.innerHTML = `
                 <p class="item-title">${item.title}</p>
@@ -298,22 +345,21 @@
     }
 
     function calculateDailyHours() {
-        [1, 2, 3].forEach(day => {
+        [0, 1, 2, 3].forEach(day => {
             const totalMinutes = agendaData
                 .filter(item => item.day === day)
                 .reduce((sum, item) => sum + item.time, 0);
 
             const hours = Math.floor(totalMinutes / 60);
             const minutes = totalMinutes % 60;
-            const decimalHours = (totalMinutes / 60).toFixed(2);
+
+            // Formatação estrita em formato HH:MM
+            const hh = String(hours).padStart(2, '0');
+            const mm = String(minutes).padStart(2, '0');
 
             const labelElement = document.getElementById(`total-day-${day}`);
             if (labelElement) {
-                if (totalMinutes === 0) {
-                    labelElement.innerText = "0 horas (Vazio)";
-                } else {
-                    labelElement.innerText = `${hours}h ${minutes}min (${decimalHours}h)`;
-                }
+                labelElement.innerText = `${hh}:${mm}`;
             }
         });
     }
@@ -331,6 +377,33 @@
             agendaData[itemIndex].day = targetDay;
             renderBoard(); 
         }
+    }
+
+    // Função de Exportação para formato CSV/XLS legível por planilhas
+    function exportToExcel() {
+        // Inclui o caractere BOM para garantir compatibilidade de acentuação no Excel do Windows
+        let csvContent = "\ufeff"; 
+        csvContent += "ID;Alocacao;Macrotema;Tema;Duração (minutos)\n";
+        
+        // Ordena os dados pelo dia de alocação escolhido na tela
+        let sortedData = [...agendaData].sort((a, b) => a.day - b.day || a.id - b.id);
+        
+        sortedData.forEach(item => {
+            let dayLabel = item.day === 0 ? "Reserva" : `Dia ${item.day}`;
+            let cleanTitle = item.title.replace(/;/g, ",").replace(/"/g, "'");
+            csvContent += `${item.id};${dayLabel};${item.macro};"${cleanTitle}";${item.time}\n`;
+        });
+        
+        let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        let link = document.createElement("a");
+        let url = URL.createObjectURL(blob);
+        
+        link.setAttribute("href", url);
+        link.setAttribute("download", "agenda_enar_2026.csv");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     document.addEventListener("DOMContentLoaded", () => {
