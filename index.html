@@ -10,7 +10,7 @@
             --anatel-light: #006699;
             --bg-gray: #f4f6f9;
             --card-white: #ffffff;
-            --border-color: #d1d5db;
+            --border-color: #cbd5e1;
             
             /* Cores dos Macrotemas */
             --color-treinamento: #3b82f6;
@@ -18,6 +18,8 @@
             --color-integracao: #10b981;
             --color-conhecimento: #8b5cf6;
             --color-melhorias: #06b6d4;
+            --color-intervalo: #64748b;
+            --color-almoco: #ef4444;
         }
 
         * {
@@ -39,7 +41,6 @@
             text-align: center;
             border-bottom: 4px solid var(--anatel-light);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: relative;
         }
 
         header h1 {
@@ -50,7 +51,7 @@
         }
 
         .action-bar {
-            max-width: 1400px;
+            max-width: 1500px;
             margin: 20px auto 0 auto;
             padding: 0 15px;
             display: flex;
@@ -73,33 +74,25 @@
             gap: 8px;
         }
 
-        .btn-export:hover {
-            background-color: #059669;
-        }
-
-        .btn-export:active {
-            transform: scale(0.98);
-        }
+        .btn-export:hover { background-color: #059669; }
+        .btn-export:active { transform: scale(0.98); }
 
         .container {
-            max-width: 1400px;
+            max-width: 1500px;
             margin: 10px auto 25px auto;
             padding: 0 15px;
         }
 
-        .board {
+        /* Layout Principal: Reserva isolada | Grade Horária + Dias */
+        .main-board {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
+            grid-template-columns: 280px 1fr;
+            gap: 20px;
             align-items: start;
         }
 
-        @media (max-width: 1200px) {
-            .board { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (max-width: 650px) {
-            .board { grid-template-columns: 1fr; }
+        @media (max-width: 1100px) {
+            .main-board { grid-template-columns: 1fr; }
         }
 
         .column {
@@ -123,6 +116,7 @@
             border-bottom: 2px solid var(--border-color);
             padding-bottom: 10px;
             margin-bottom: 15px;
+            height: 40px;
         }
 
         .column-title {
@@ -143,64 +137,109 @@
             font-family: monospace;
         }
 
-        .column-body {
-            min-height: 600px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            padding-bottom: 100px;
+        /* Grade de Horários (Escala fixa alinhada) */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 60px repeat(3, 1fr);
+            gap: 15px;
+            overflow-x: auto;
         }
 
+        .timeline-col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .column-header-placeholder {
+            height: 55px; /* Alinha perfeitamente com o início do column-body dos dias */
+        }
+
+        /* 1 Hora = 96px de altura (1.6px por minuto) */
+        .hour-tick {
+            height: 96px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #64748b;
+            border-top: 1px dashed #cbd5e1;
+            padding-top: 4px;
+            box-sizing: border-box;
+        }
+
+        .column-body {
+            min-height: 1056px; /* Garante espaço vertical para as 11 horas da escala (8h às 19h) */
+            display: flex;
+            flex-direction: column;
+            gap: 0; /* Sem gap para manter precisão matemática na escala */
+            background-image: linear-gradient(to bottom, #cbd5e1 1px, transparent 1px);
+            background-size: 100% 96px; /* Linhas horizontais automáticas de hora em hora */
+            padding-bottom: 50px;
+        }
+
+        /* Estilização Proporcional dos Cards */
         .item-card {
             background-color: var(--card-white);
-            border-radius: 6px;
+            border-radius: 4px;
             border-left: 5px solid #ccc;
-            padding: 10px 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 5px 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             cursor: grab;
-            transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            overflow: hidden;
+            box-sizing: border-box;
+            border-bottom: 1px solid #e2e8f0;
         }
 
-        .item-card:active {
-            cursor: grabbing;
-        }
-
-        .item-card.dragging {
-            opacity: 0.4;
-            transform: scale(0.98);
-        }
+        .item-card:active { cursor: grabbing; }
+        .item-card.dragging { opacity: 0.4; }
 
         .item-title {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: bold;
             color: #1f2937;
-            margin: 0 0 8px 0;
-            line-height: 1.3;
+            margin: 0;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Ajuste para exibir texto completo em blocos maiores */
+        .item-card[style*="height: 9"], 
+        .item-card[style*="height: 1"], 
+        .item-card[style*="height: 2"] {
+            padding: 8px 10px;
+        }
+        .item-card[style*="height: 9"] .item-title, 
+        .item-card[style*="height: 1"] .item-title, 
+        .item-card[style*="height: 2"] .item-title {
+            white-space: normal;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
         }
 
         .item-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: auto;
+            margin-top: 2px;
         }
 
         .badge {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             text-transform: uppercase;
             font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 1px 4px;
+            border-radius: 3px;
             color: white;
         }
 
         .item-duration {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #6b7280;
-            font-weight: 600;
+            font-weight: bold;
         }
 
         .badge-treinamento { background-color: var(--color-treinamento); }
@@ -208,12 +247,16 @@
         .badge-integracao { background-color: var(--color-integracao); }
         .badge-conhecimento { background-color: var(--color-conhecimento); }
         .badge-melhorias { background-color: var(--color-melhorias); }
+        .badge-intervalo { background-color: var(--color-intervalo); }
+        .badge-almoco { background-color: var(--color-almoco); }
 
         .border-treinamento { border-left-color: var(--color-treinamento); }
         .border-orientacoes { border-left-color: var(--color-orientacoes); }
         .border-integracao { border-left-color: var(--color-integracao); }
         .border-conhecimento { border-left-color: var(--color-conhecimento); }
         .border-melhorias { border-left-color: var(--color-melhorias); }
+        .border-intervalo { border-left-color: var(--color-intervalo); }
+        .border-almoco { border-left-color: var(--color-almoco); }
     </style>
 </head>
 <body>
@@ -229,7 +272,8 @@
 </div>
 
 <div class="container">
-    <div class="board">
+    <div class="main-board">
+        
         <div class="column column-reserva" data-day="0">
             <div class="column-header">
                 <span class="column-title">Reserva</span>
@@ -238,36 +282,56 @@
             <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, 0)"></div>
         </div>
 
-        <div class="column" data-day="1">
-            <div class="column-header">
-                <span class="column-title">Dia 1</span>
-                <span class="column-time" id="total-day-1">00:00</span>
+        <div class="schedule-grid">
+            <div class="timeline-col">
+                <div class="column-header-placeholder"></div>
+                <div class="hour-tick">08:00</div>
+                <div class="hour-tick">09:00</div>
+                <div class="hour-tick">10:00</div>
+                <div class="hour-tick">11:00</div>
+                <div class="hour-tick">12:00</div>
+                <div class="hour-tick">13:00</div>
+                <div class="hour-tick">14:00</div>
+                <div class="hour-tick">15:00</div>
+                <div class="hour-tick">16:00</div>
+                <div class="hour-tick">17:00</div>
+                <div class="hour-tick">18:00</div>
             </div>
-            <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, 1)"></div>
+
+            <div class="column" data-day="1">
+                <div class="column-header">
+                    <span class="column-title">Dia 1</span>
+                    <span class="column-time" id="total-day-1">00:00</span>
+                </div>
+                <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, 1)"></div>
+            </div>
+
+            <div class="column" data-day="2">
+                <div class="column-header">
+                    <span class="column-title">Dia 2</span>
+                    <span class="column-time" id="total-day-2">00:00</span>
+                </div>
+                <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, 2)"></div>
+            </div>
+
+            <div class="column" data-day="3">
+                <div class="column-header">
+                    <span class="column-title">Dia 3</span>
+                    <span class="column-time" id="total-day-3">00:00</span>
+                </div>
+                <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, 3)"></div>
+            </div>
         </div>
 
-        <div class="column" data-day="2">
-            <div class="column-header">
-                <span class="column-title">Dia 2</span>
-                <span class="column-time" id="total-day-2">00:00</span>
-            </div>
-            <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, 2)"></div>
-        </div>
-
-        <div class="column" data-day="3">
-            <div class="column-header">
-                <span class="column-title">Dia 3</span>
-                <span class="column-time" id="total-day-3">00:00</span>
-            </div>
-            <div class="column-body" ondragover="allowDrop(event)" ondrop="drop(event, 3)"></div>
-        </div>
     </div>
 </div>
 
 <script>
-    // Base de dados completa alinhada perfeitamente com a planilha fornecida
+    // Escala base: 1 minuto = 1.6 pixels. Logo, 1 hora (60 min) = 96px.
+    const pixelScale = 1.6;
+
     let agendaData = [
-        // DIA 1 
+        // DIA 1
         { id: 2, day: 1, macro: "Treinamento", classId: "treinamento", time: 90, title: "Redirecionamento de créditos - entidades baixadas" },
         { id: 3, day: 1, macro: "Orientações", classId: "orientacoes", time: 30, title: "Ministério das comunicações - situação da outorga de entidades de radiodifusão baixadas" },
         { id: 14, day: 1, macro: "Integração", classId: "integracao", time: 30, title: "Dinâmicas" },
@@ -280,7 +344,7 @@
         { id: 35, day: 1, macro: "Melhorias", classId: "melhorias", time: 60, title: "Importância da arrecadação aos GR’s" },
         { id: 36, day: 1, macro: "Conhecimento", classId: "conhecimento", time: 30, title: "Revisão dos valores de inscrição em dívida e execução" },
         
-        // DIA 2 [cite: 1, 2]
+        // DIA 2
         { id: 5, day: 2, macro: "Treinamento", classId: "treinamento", time: 120, title: "Arco (conhecimentos)" },
         { id: 7, day: 2, macro: "Orientações", classId: "orientacoes", time: 30, title: "Impugnação" },
         { id: 15, day: 2, macro: "Integração", classId: "integracao", time: 30, title: "Dinâmicas" },
@@ -293,7 +357,7 @@
         { id: 28, day: 2, macro: "Conhecimento", classId: "conhecimento", time: 30, title: "Suspensão da exigibilidade dos créditos" },
         { id: 33, day: 2, macro: "Conhecimento", classId: "conhecimento", time: 60, title: "IA (automação power automate)" },
         
-        // DIA 3 [cite: 2, 3]
+        // DIA 3
         { id: 4, day: 3, macro: "Orientações", classId: "orientacoes", time: 60, title: "Tratamento de multas administrativas 5343" },
         { id: 6, day: 3, macro: "Orientações", classId: "orientacoes", time: 60, title: "Avaliar se falamos das multas 1660, 1661" },
         { id: 13, day: 3, macro: "Orientações", classId: "orientacoes", time: 60, title: "Corregedoria" },
@@ -304,7 +368,18 @@
         { id: 34, day: 3, macro: "Conhecimento", classId: "conhecimento", time: 60, title: "IA (prompts. Casos concretos)" },
         { id: 37, day: 3, macro: "Conhecimento", classId: "conhecimento", time: 30, title: "Apresentar a página da gr11or que contém informações de outorga e arrecadação" },
         { id: 38, day: 3, macro: "Conhecimento", classId: "conhecimento", time: 30, title: "Projetos de melhoria da AFFO (toda a AFFO estará trabalhando projetos em 2026)" },
-        { id: 39, day: 3, macro: "Conhecimento", classId: "conhecimento", time: 45, title: "Projetos de melhoria da AFFO (toda a AFFO estará trabalhando projetos em 2026)" }
+        { id: 39, day: 3, macro: "Conhecimento", classId: "conhecimento", time: 45, title: "Projetos de melhoria da AFFO (toda a AFFO estará trabalhando projetos em 2026)" },
+
+        // ITENS EXTRA ADICIONADOS À RESERVA (DIA 0)
+        { id: 101, day: 0, macro: "Intervalo", classId: "intervalo", time: 30, title: "Intervalo" },
+        { id: 102, day: 0, macro: "Intervalo", classId: "intervalo", time: 30, title: "Intervalo" },
+        { id: 103, day: 0, macro: "Intervalo", classId: "intervalo", time: 30, title: "Intervalo" },
+        { id: 104, day: 0, macro: "Intervalo", classId: "intervalo", time: 30, title: "Intervalo" },
+        { id: 105, day: 0, macro: "Intervalo", classId: "intervalo", time: 30, title: "Intervalo" },
+        { id: 106, day: 0, macro: "Intervalo", classId: "intervalo", time: 30, title: "Intervalo" },
+        { id: 201, day: 0, macro: "Almoço", classId: "almoco", time: 90, title: "Almoço" },
+        { id: 202, day: 0, macro: "Almoço", classId: "almoco", time: 90, title: "Almoço" },
+        { id: 203, day: 0, macro: "Almoço", classId: "almoco", time: 90, title: "Almoço" }
     ];
 
     function renderBoard() {
@@ -319,7 +394,8 @@
             card.setAttribute('draggable', 'true');
             card.setAttribute('id', `item-${item.id}`);
             
-            card.style.minHeight = `${65 + (item.time * 0.5)}px`;
+            // Definição estrita e proporcional da altura baseada no tempo
+            card.style.height = `${item.time * pixelScale}px`;
 
             card.innerHTML = `
                 <p class="item-title">${item.title}</p>
@@ -353,7 +429,7 @@
             const hours = Math.floor(totalMinutes / 60);
             const minutes = totalMinutes % 60;
 
-            // Formatação estrita em formato HH:MM
+            // Formatação estrita exigida no formato HH:MM
             const hh = String(hours).padStart(2, '0');
             const mm = String(minutes).padStart(2, '0');
 
@@ -379,13 +455,10 @@
         }
     }
 
-    // Função de Exportação para formato CSV/XLS legível por planilhas
     function exportToExcel() {
-        // Inclui o caractere BOM para garantir compatibilidade de acentuação no Excel do Windows
         let csvContent = "\ufeff"; 
-        csvContent += "ID;Alocacao;Macrotema;Tema;Duração (minutos)\n";
+        csvContent += "ID;Alocacao;Macrotema;Tema;Duracao (minutos)\n";
         
-        // Ordena os dados pelo dia de alocação escolhido na tela
         let sortedData = [...agendaData].sort((a, b) => a.day - b.day || a.id - b.id);
         
         sortedData.forEach(item => {
