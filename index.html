@@ -108,14 +108,19 @@
             border-width: 2px;
         }
 
+        /* ALINHAMENTO DO CABEÇALHO PARA SINCRONIA PERFEITA */
         .column-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-bottom: 15px;
             height: 40px;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 10px;
+            padding-bottom: 0;
+        }
+
+        .column-header-placeholder {
+            height: 52px; /* Equivale à altura do header (40px) + margem (10px) + borda (2px) */
         }
 
         .column-title {
@@ -148,12 +153,9 @@
             flex-direction: column;
         }
 
-        .column-header-placeholder {
-            height: 55px; 
-        }
-
+        /* 1 Hora = 180px de altura (3px por minuto) */
         .hour-tick {
-            height: 96px;
+            height: 180px;
             font-size: 0.75rem;
             font-weight: bold;
             color: #64748b;
@@ -163,20 +165,21 @@
         }
 
         .column-body {
-            min-height: 1056px; 
+            min-height: 1980px; /* Espaço para 11 horas (11 * 180px) */
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 0; /* GAP REMOVIDO para não distorcer a matemática do alinhamento */
             background-image: linear-gradient(to bottom, #cbd5e1 1px, transparent 1px);
-            background-size: 100% 96px; 
+            background-size: 100% 180px; 
             padding-bottom: 50px;
         }
 
+        /* CARDS OTIMIZADOS PARA A NOVA ESCALA */
         .item-card {
             background-color: var(--card-white);
             border-radius: 4px;
             border-left: 5px solid #ccc;
-            padding: 8px 10px;
+            padding: 4px 8px; /* Padding reduzido para acomodar blocos de 15 min */
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             cursor: grab;
             display: flex;
@@ -184,21 +187,21 @@
             justify-content: space-between;
             overflow: hidden;
             box-sizing: border-box;
-            border-bottom: 1px solid #e2e8f0;
-            transition: box-shadow 0.2s; /* Transição de altura removida para não travar o drag dinâmico */
+            border-bottom: 1px solid #e2e8f0; /* Separação visual nativa */
+            transition: box-shadow 0.2s, opacity 0.2s;
         }
 
         .item-card:active { cursor: grabbing; }
         .item-card.dragging { opacity: 0.5; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
 
         .item-title {
-            font-size: 0.82rem;
+            font-size: 0.75rem;
             font-weight: bold;
             color: #1f2937;
-            margin: 0 0 4px 0;
-            line-height: 1.3;
+            margin: 0 0 2px 0;
+            line-height: 1.2;
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 4; /* Permite até 4 linhas em blocos maiores */
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -208,14 +211,13 @@
             justify-content: space-between;
             align-items: center;
             margin-top: auto;
-            padding-top: 2px;
         }
 
         .badge {
-            font-size: 0.62rem;
+            font-size: 0.6rem;
             text-transform: uppercase;
             font-weight: bold;
-            padding: 1px 5px;
+            padding: 1px 4px;
             border-radius: 3px;
             color: white;
         }
@@ -311,7 +313,9 @@
 </div>
 
 <script>
-    const pixelScale = 1.6;
+    // NOVO ZOOM DA ESCALA: 3 pixels por minuto. Garante blocos precisos e legíveis.
+    // 60 minutos = 180px | 30 minutos = 90px | 15 minutos = 45px
+    const pixelScale = 3;
 
     let agendaData = [
         // DIA 1
@@ -377,8 +381,8 @@
             card.setAttribute('draggable', 'true');
             card.setAttribute('id', `item-${item.id}`);
             
-            let proportionalHeight = item.time * pixelScale;
-            card.style.minHeight = `${Math.max(48, proportionalHeight)}px`;
+            // ALTURA ESTRITA: Garante a escala exata e milimétrica sem limites mínimos falsos.
+            card.style.height = `${item.time * pixelScale}px`;
 
             card.innerHTML = `
                 <p class="item-title" title="${item.title}">${item.title}</p>
@@ -388,14 +392,11 @@
                 </div>
             `;
 
-            // Adiciona classe visual durante o arrasto
             card.addEventListener('dragstart', (e) => {
                 card.classList.add('dragging');
-                // Opcional para navegadores antigos, o importante aqui é a classe dragging
                 e.dataTransfer.setData('text/plain', item.id);
             });
 
-            // Quando soltar, remove a classe visual e SINCRONIZA o array de dados com a nova ordem da tela
             card.addEventListener('dragend', () => {
                 card.classList.remove('dragging');
                 syncDataWithDOM();
@@ -407,29 +408,26 @@
         calculateDailyHours();
     }
 
-    // Função que permite soltar e reordenar visualmente enquanto arrasta
     function allowDrop(e) {
         e.preventDefault();
-        const container = e.currentTarget; // O column-body onde o mouse está passando
+        const container = e.currentTarget; 
         const afterElement = getDragAfterElement(container, e.clientY);
         const dragging = document.querySelector('.dragging');
         
         if (dragging) {
             if (afterElement == null) {
-                container.appendChild(dragging); // Coloca no final
+                container.appendChild(dragging);
             } else {
-                container.insertBefore(dragging, afterElement); // Coloca antes do card mais próximo
+                container.insertBefore(dragging, afterElement);
             }
         }
     }
 
-    // Calcula fisicamente qual é o card que está logo abaixo do mouse
     function getDragAfterElement(container, y) {
         const draggableElements = [...container.querySelectorAll('.item-card:not(.dragging)')];
 
         return draggableElements.reduce((closest, child) => {
             const box = child.getBoundingClientRect();
-            // Pega o meio do card para definir a zona de transição
             const offset = y - box.top - box.height / 2;
             if (offset < 0 && offset > closest.offset) {
                 return { offset: offset, element: child };
@@ -439,7 +437,6 @@
         }, { offset: Number.NEGATIVE_INFINITY }).element;
     }
 
-    // Após soltar o card, reescreve o array "agendaData" baseando-se na ordem visual (DOM)
     function syncDataWithDOM() {
         let newAgendaData = [];
         
@@ -451,14 +448,14 @@
                 const id = parseInt(card.getAttribute('id').replace('item-', ''));
                 const itemData = agendaData.find(i => i.id === id);
                 if (itemData) {
-                    itemData.day = day; // Atualiza o dia caso tenha mudado de coluna
-                    newAgendaData.push(itemData); // Coloca na nova ordem cronológica
+                    itemData.day = day; 
+                    newAgendaData.push(itemData);
                 }
             });
         });
 
         agendaData = newAgendaData;
-        calculateDailyHours(); // Recalcula as horas pois os itens podem ter trocado de dia
+        calculateDailyHours();
     }
 
     function calculateDailyHours() {
@@ -484,7 +481,6 @@
         let csvContent = "\ufeff"; 
         csvContent += "ID;Alocacao;Macrotema;Tema;Duracao (minutos)\n";
         
-        // Como o syncDataWithDOM já organizou o array na exata ordem visual, basta iterá-lo!
         agendaData.forEach(item => {
             let dayLabel = item.day === 0 ? "Reserva" : `Dia ${item.day}`;
             let cleanTitle = item.title.replace(/;/g, ",").replace(/"/g, "'");
