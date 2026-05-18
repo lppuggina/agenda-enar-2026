@@ -108,7 +108,7 @@
             border-width: 2px;
         }
 
-        /* ALINHAMENTO DO CABEÇALHO PARA SINCRONIA PERFEITA */
+        /* ESTRUTURA DOS CABEÇALHOS EQUALIZADA EM PIXELS COLETIVOS */
         .column-header {
             display: flex;
             justify-content: space-between;
@@ -116,11 +116,12 @@
             height: 40px;
             border-bottom: 2px solid var(--border-color);
             margin-bottom: 10px;
-            padding-bottom: 0;
         }
 
         .column-header-placeholder {
-            height: 52px; /* Equivale à altura do header (40px) + margem (10px) + borda (2px) */
+            height: 40px;
+            border-bottom: 2px solid transparent;
+            margin-bottom: 10px;
         }
 
         .column-title {
@@ -148,12 +149,14 @@
             overflow-x: auto;
         }
 
+        /* COMPENSAÇÃO DE PADDING DA BARRA LATERAL DE HORÁRIOS */
         .timeline-col {
             display: flex;
             flex-direction: column;
+            padding-top: 15px; /* Alinha perfeitamente com o padding interno de .column */
         }
 
-        /* 1 Hora = 180px de altura (3px por minuto) */
+        /* 1 Hora = exatamente 180px de altura (3px por minuto) */
         .hour-tick {
             height: 180px;
             font-size: 0.75rem;
@@ -165,29 +168,29 @@
         }
 
         .column-body {
-            min-height: 1980px; /* Espaço para 11 horas (11 * 180px) */
+            min-height: 1980px; 
             display: flex;
             flex-direction: column;
-            gap: 0; /* GAP REMOVIDO para não distorcer a matemática do alinhamento */
+            gap: 0; /* PROIBIDO GAP: Evita o acúmulo de erros de pixels ao longo da escala */
             background-image: linear-gradient(to bottom, #cbd5e1 1px, transparent 1px);
             background-size: 100% 180px; 
             padding-bottom: 50px;
         }
 
-        /* CARDS OTIMIZADOS PARA A NOVA ESCALA */
+        /* CONFIGURAÇÃO RÍGIDA DE TAMANHO DE CARTÃO */
         .item-card {
             background-color: var(--card-white);
             border-radius: 4px;
             border-left: 5px solid #ccc;
-            padding: 4px 8px; /* Padding reduzido para acomodar blocos de 15 min */
+            padding: 6px 10px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             cursor: grab;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             overflow: hidden;
-            box-sizing: border-box;
-            border-bottom: 1px solid #e2e8f0; /* Separação visual nativa */
+            box-sizing: border-box; /* Inclui estritamente paddings e borders dentro da altura definida pelo JS */
+            border-bottom: 1px solid #cbd5e1; 
             transition: box-shadow 0.2s, opacity 0.2s;
         }
 
@@ -201,7 +204,7 @@
             margin: 0 0 2px 0;
             line-height: 1.2;
             display: -webkit-box;
-            -webkit-line-clamp: 4; /* Permite até 4 linhas em blocos maiores */
+            -webkit-line-clamp: 4; 
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -313,8 +316,8 @@
 </div>
 
 <script>
-    // NOVO ZOOM DA ESCALA: 3 pixels por minuto. Garante blocos precisos e legíveis.
-    // 60 minutos = 180px | 30 minutos = 90px | 15 minutos = 45px
+    // FATOR DE CONVERSÃO MATEMÁTICO RÍGIDO: 3px por minuto. 
+    // 60 minutos = 180px | 30 minutos = 90px | 15 minutos = 45px.
     const pixelScale = 3;
 
     let agendaData = [
@@ -381,7 +384,7 @@
             card.setAttribute('draggable', 'true');
             card.setAttribute('id', `item-${item.id}`);
             
-            // ALTURA ESTRITA: Garante a escala exata e milimétrica sem limites mínimos falsos.
+            // CONVERSÃO MILIMÉTRICA: A altura computada engloba bordas e preenchimentos
             card.style.height = `${item.time * pixelScale}px`;
 
             card.innerHTML = `
