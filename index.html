@@ -153,7 +153,7 @@
         .timeline-col {
             display: flex;
             flex-direction: column;
-            padding-top: 15px; /* Alinha perfeitamente com o padding interno de .column */
+            padding-top: 15px; 
         }
 
         /* 1 Hora = exatamente 180px de altura (3px por minuto) */
@@ -168,10 +168,10 @@
         }
 
         .column-body {
-            min-height: 1980px; 
+            min-height: 2340px; /* Espaço ajustado para 13 horas (13 * 180px) */
             display: flex;
             flex-direction: column;
-            gap: 0; /* PROIBIDO GAP: Evita o acúmulo de erros de pixels ao longo da escala */
+            gap: 0; 
             background-image: linear-gradient(to bottom, #cbd5e1 1px, transparent 1px);
             background-size: 100% 180px; 
             padding-bottom: 50px;
@@ -189,7 +189,7 @@
             flex-direction: column;
             justify-content: space-between;
             overflow: hidden;
-            box-sizing: border-box; /* Inclui estritamente paddings e borders dentro da altura definida pelo JS */
+            box-sizing: border-box; 
             border-bottom: 1px solid #cbd5e1; 
             transition: box-shadow 0.2s, opacity 0.2s;
         }
@@ -285,6 +285,8 @@
                 <div class="hour-tick">16:00</div>
                 <div class="hour-tick">17:00</div>
                 <div class="hour-tick">18:00</div>
+                <div class="hour-tick">19:00</div>
+                <div class="hour-tick">20:00</div>
             </div>
 
             <div class="column" data-day="1">
